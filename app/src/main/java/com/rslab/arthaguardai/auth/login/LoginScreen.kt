@@ -21,6 +21,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rslab.arthaguardai.auth.login.LoginViewModel
 import androidx.navigation.NavController
 import com.rslab.arthaguardai.ui.theme.ArthaGuardAITheme
+import com.rslab.arthaguardai.utils.SessionManager
 import kotlinx.coroutines.launch
 
 @Composable
@@ -37,7 +38,7 @@ fun LoginScreen(
     LaunchedEffect(uiState.isSuccess) {
         if (uiState.isSuccess) {
             Toast.makeText(context, "Welcome back!", Toast.LENGTH_SHORT).show()
-            navController.navigate("dashboard") {
+            navController.navigate("dashboard/${uiState.userEmail}") {
                 popUpTo("login") { inclusive = true }
             }
             viewModel.resetState()

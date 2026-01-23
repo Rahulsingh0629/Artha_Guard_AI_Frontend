@@ -2,9 +2,8 @@ package com.rslab.arthaguardai.api
 
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
-
-/* ---------------- REQUEST MODELS ---------------- */
 
 data class LoginRequest(
     val email: String,
@@ -18,9 +17,6 @@ data class RegisterRequest(
     val password: String,
     val phone_number: String
 )
-
-/* ---------------- RESPONSE MODELS ---------------- */
-
 data class LoginResponse(
     val access_token: String,
     val token_type: String,
@@ -33,12 +29,11 @@ data class RegisterResponse(
     val message: String,
     val email: String
 )
-
-
-/* ---------------- API SERVICE ---------------- */
-
+data class IndicesResponse(
+    val nifty: Any,
+    val sensex: Any
+)
 interface ApiService {
-
     @POST("auth/login")
     fun login(
         @Body request: LoginRequest
@@ -48,5 +43,8 @@ interface ApiService {
     fun register(
         @Body request: RegisterRequest
     ): Call<RegisterResponse>
+
+    @GET("market/indices")
+    suspend fun getIndices(): IndicesResponse
 
 }

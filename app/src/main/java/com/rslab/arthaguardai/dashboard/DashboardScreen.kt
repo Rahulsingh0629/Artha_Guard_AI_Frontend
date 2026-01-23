@@ -36,6 +36,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,12 +46,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.rslab.arthaguardai.ui.theme.ArthaGuardAITheme
 import kotlinx.coroutines.launch
-
 
 @Composable
 fun DashboardScreen(userName: String, navController: NavHostController) {
@@ -60,6 +59,8 @@ fun DashboardScreen(userName: String, navController: NavHostController) {
     ){
         val drawerState = rememberDrawerState(DrawerValue.Closed)
         val scope = rememberCoroutineScope()
+        val viewModel: DashboardViewModel = viewModel()
+        val uiState by viewModel.uiState.collectAsState()
 
         ModalNavigationDrawer(
             drawerState = drawerState,
@@ -103,16 +104,18 @@ fun DashboardScreen(userName: String, navController: NavHostController) {
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         IndexCard(
-                            title = "Nifty 50",
-                            value = "25.981.80",
-                            change = "+0.56%",
-                            isPositive = true
+                            title = "NIFTY 50",
+                            change = uiState.niftyChange,
+                            isPositive = uiState.niftyPositive,
+                            value = uiState.niftyValue,
+                            isNegative = !uiState.niftyPositive
                         )
                         IndexCard(
                             title = "SENSEX",
-                            value = "84,810.87",
-                            change = "-230.58 (0.27%)",
-                            isPositive = false
+                            value = uiState.sensexValue,
+                            change = uiState.sensexChange,
+                            isPositive = uiState.sensexPositive,
+                            isNegative = !uiState.sensexPositive
                         )
                     }
 
@@ -389,7 +392,13 @@ fun SectionTitle(title: String) {
 }
 
 @Composable
-fun RowScope.IndexCard(title: String, change: String, isPositive: Boolean, value: String) {
+fun RowScope.IndexCard(
+    title: String,
+    change: String,
+    isPositive: Boolean,
+    value: String,
+    isNegative: Boolean
+) {
     Surface(
         modifier = Modifier.weight(1f),
         shape = RoundedCornerShape(16.dp),

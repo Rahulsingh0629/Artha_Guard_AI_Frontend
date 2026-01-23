@@ -120,12 +120,6 @@ fun DashboardTopBar(
                         text = "ArthaGuard",
                         fontWeight = FontWeight.Bold
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    Text(
-                        text = userName,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
                 }
             },
             navigationIcon ={

@@ -1,7 +1,5 @@
 package com.rslab.arthaguardai.dashboard
 
-import android.R.attr.title
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -33,7 +31,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -64,7 +61,6 @@ fun DashboardScreen(userName: String) {
                 containerColor = Color(0xFFF3F4F6),
                 topBar = {
                     DashboardTopBar(
-                        userName = userName,
                         onMenuClick = {
                             scope.launch {drawerState.open()}
                         },
@@ -95,7 +91,6 @@ fun DashboardScreen(userName: String) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardTopBar(
-    userName: String,
     onMenuClick: () -> Unit,
     onSearchClick: () -> Unit,
     onProfileClick: () -> Unit

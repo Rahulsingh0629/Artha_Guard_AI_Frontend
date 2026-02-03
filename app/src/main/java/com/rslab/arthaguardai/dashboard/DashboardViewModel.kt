@@ -24,7 +24,7 @@ class DashboardViewModel : ViewModel() {
         viewModelScope.launch {
             while (true) {
                 fetchMarketData()
-                delay(10_000) // every 10 seconds
+                delay(60_000) // 1 minute (safe for Alpha Vantage)
             }
         }
     }
@@ -33,20 +33,20 @@ class DashboardViewModel : ViewModel() {
         try {
             val response = api.getIndices()
 
-            val niftyQuote = response.nifty.quote
-            val sensexQuote = response.sensex.quote
+            val nifty = response.nifty50
+            val sensex = response.sensex
 
             _uiState.update {
                 it.copy(
                     loading = false,
 
-                    niftyValue = niftyQuote.price,
-                    niftyChange = niftyQuote.changePercent,
-                    niftyPositive = !niftyQuote.change.startsWith("-"),
+                    niftyValue = if (nifty.available) nifty.price else "--",
+                    niftyChange = if (nifty.available) nifty.changePercent else "--",
+                    niftyPositive = nifty.positive,
 
-                    sensexValue = sensexQuote.price,
-                    sensexChange = sensexQuote.changePercent,
-                    sensexPositive = !sensexQuote.change.startsWith("-"),
+                    sensexValue = if (sensex.available) sensex.price else "--",
+                    sensexChange = if (sensex.available) sensex.changePercent else "--",
+                    sensexPositive = sensex.positive,
 
                     error = null
                 )

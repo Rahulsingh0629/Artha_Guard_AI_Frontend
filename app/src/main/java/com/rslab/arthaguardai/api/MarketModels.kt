@@ -2,21 +2,21 @@ package com.rslab.arthaguardai.api
 
 import com.google.gson.annotations.SerializedName
 
-data class IndicesResponse(
-    val nifty: GlobalQuoteWrapper,
-    val sensex: GlobalQuoteWrapper
-)
-data class GlobalQuoteWrapper(
-    @SerializedName("Global Quote")
-    val quote: GlobalQuote
-)
-data class GlobalQuote(
-    @SerializedName("05. price")
-    val price: String,
+data class MarketIndicesResponse(
+    @SerializedName("nifty_50")
+    val nifty50: IndexData,
 
-    @SerializedName("09. change")
+    @SerializedName("sensex")
+    val sensex: IndexData
+)
+
+data class IndexData(
+    val available: Boolean,
+    val price: String,
     val change: String,
 
-    @SerializedName("10. change percent")
-    val changePercent: String
+    @SerializedName("change_percent")
+    val changePercent: String,
+
+    val positive: Boolean
 )

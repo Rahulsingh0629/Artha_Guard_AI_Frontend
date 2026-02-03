@@ -73,7 +73,7 @@ fun DashboardScreen(userName: String, navController: NavHostController) {
             }
         )  {
             Scaffold (
-                containerColor = Color(0xFFF3F4F6),
+                containerColor = Color(0xFF287CA1),
                 topBar = {
                     DashboardTopBar(
                         onMenuClick = {
@@ -470,22 +470,4 @@ fun BottomNavigationBar() {
             label = { Text("UPI") })
     }
 }
-
-//
-//@Preview
-//@Composable
-//private fun DashboardScreenPreview() {
-//    ArthaGuardAITheme {
-//        DashboardScreen(userName = "", navController = NavHostController(null))
-//    }
-//}
-//
-//@Preview
-//@Composable
-//private fun DashBoardDrawerPreview() {
-//    ArthaGuardAITheme {
-//        DashboardDrawer(onItemClick = {})
-//    }
-//
-//}
 

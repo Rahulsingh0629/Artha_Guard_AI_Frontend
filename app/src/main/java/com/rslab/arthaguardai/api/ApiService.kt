@@ -29,7 +29,7 @@ data class RegisterResponse(
     val message: String,
     val email: String
 )
-data class IndicesResponse(
+data class MarketIndicesResponseData(
     val nifty: Any,
     val sensex: Any
 )
@@ -45,6 +45,6 @@ interface ApiService {
     ): Call<RegisterResponse>
 
     @GET("market/indices")
-    suspend fun getIndices(): IndicesResponse
+    suspend fun getIndices(): MarketIndicesResponse
 
 }

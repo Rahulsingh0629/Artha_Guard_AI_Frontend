@@ -1,15 +1,21 @@
 package com.rslab.arthaguardai.dashboard
 
+import com.rslab.arthaguardai.network.*
+
 data class DashboardUiState(
-    val loading: Boolean = true,
+    val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
 
-    val niftyValue: String = "--",
-    val niftyChange: String = "--",
-    val niftyPositive: Boolean = true,
+    val marketStatus: MarketStatusResponse? = null,
 
-    val sensexValue: String = "--",
-    val sensexChange: String = "--",
-    val sensexPositive: Boolean = true,
+    val nifty: IndexItem? = null,
+    val sensex: IndexItem? = null,
+    val bankNifty: IndexItem? = null,
+
+    val topGainers: List<TopMoverItem> = emptyList(),
+    val topLosers: List<TopMoverItem> = emptyList(),
+
+    val stocks: List<StockItem> = emptyList(),
 
     val error: String? = null
 )

@@ -1,4 +1,4 @@
-package com.rslab.arthaguardai.api
+package com.rslab.arthaguardai.network
 
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit

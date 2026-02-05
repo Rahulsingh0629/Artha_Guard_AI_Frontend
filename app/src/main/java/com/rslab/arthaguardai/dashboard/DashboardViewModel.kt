@@ -2,62 +2,76 @@ package com.rslab.arthaguardai.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rslab.arthaguardai.api.RetrofitInstance
+import com.rslab.arthaguardai.network.RetrofitInstance
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class DashboardViewModel : ViewModel() {
 
-    private val api = RetrofitInstance.api
-
-    private val _uiState = MutableStateFlow(DashboardUiState())
-    val uiState = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(DashboardUiState(isLoading = true))
+    val uiState: StateFlow<DashboardUiState> = _uiState
 
     init {
-        startMarketUpdates()
+        loadDashboard(initial = true)
+        startAutoRefresh()
     }
 
-    private fun startMarketUpdates() {
+    // 🔄 Manual refresh (Pull-to-refresh)
+    fun refresh() {
+        loadDashboard(isRefresh = true)
+    }
+
+    private fun loadDashboard(
+        initial: Boolean = false,
+        isRefresh: Boolean = false
+    ) {
         viewModelScope.launch {
-            while (true) {
-                fetchMarketData()
-                delay(60_000) // 1 minute (safe for Alpha Vantage)
+            try {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = initial,
+                    isRefreshing = isRefresh,
+                    error = null
+                )
+
+                val marketStatus = RetrofitInstance.api.getMarketStatus()
+                val indices = RetrofitInstance.api.getIndices()
+                val stocksResponse = RetrofitInstance.api.getStocks()
+                val movers = RetrofitInstance.api.getTopMovers()
+
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    isRefreshing = false,
+
+                    marketStatus = marketStatus,
+
+                    nifty = indices.nifty,
+                    sensex = indices.sensex,
+                    bankNifty = indices.bankNifty,
+
+                    topGainers = movers.gainers,
+                    topLosers = movers.losers,
+
+                    stocks = stocksResponse.stocks
+                )
+
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    isRefreshing = false,
+                    error = e.message ?: "Something went wrong"
+                )
             }
         }
     }
 
-    private suspend fun fetchMarketData() {
-        try {
-            val response = api.getIndices()
-
-            val nifty = response.nifty50
-            val sensex = response.sensex
-
-            _uiState.update {
-                it.copy(
-                    loading = false,
-
-                    niftyValue = if (nifty.available) nifty.price else "--",
-                    niftyChange = if (nifty.available) nifty.changePercent else "--",
-                    niftyPositive = nifty.positive,
-
-                    sensexValue = if (sensex.available) sensex.price else "--",
-                    sensexChange = if (sensex.available) sensex.changePercent else "--",
-                    sensexPositive = sensex.positive,
-
-                    error = null
-                )
-            }
-
-        } catch (e: Exception) {
-            _uiState.update {
-                it.copy(
-                    loading = false,
-                    error = "Market data unavailable"
-                )
+    // ⏱ Auto refresh every 30 seconds
+    private fun startAutoRefresh() {
+        viewModelScope.launch {
+            while (true) {
+                delay(30_000)
+                loadDashboard()
             }
         }
     }

@@ -2,9 +2,9 @@ package com.rslab.arthaguardai.auth.login
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import com.rslab.arthaguardai.api.LoginRequest
-import com.rslab.arthaguardai.api.LoginResponse
-import com.rslab.arthaguardai.api.RetrofitInstance
+import com.rslab.arthaguardai.network.LoginRequest
+import com.rslab.arthaguardai.network.LoginResponse
+import com.rslab.arthaguardai.network.RetrofitInstance
 import com.rslab.arthaguardai.utils.SessionManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

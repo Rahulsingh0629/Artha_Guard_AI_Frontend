@@ -3,8 +3,8 @@ package com.rslab.arthaguardai.auth.register
 import RegisterUiState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rslab.arthaguardai.api.RegisterRequest
-import com.rslab.arthaguardai.api.RetrofitInstance
+import com.rslab.arthaguardai.network.RegisterRequest
+import com.rslab.arthaguardai.network.RetrofitInstance
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

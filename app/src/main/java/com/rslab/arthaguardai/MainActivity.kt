@@ -19,6 +19,7 @@ import androidx.navigation.navArgument
 import com.rslab.arthaguardai.auth.login.LoginScreen
 import com.rslab.arthaguardai.auth.register.RegisterScreen
 import com.rslab.arthaguardai.dashboard.DashboardScreen
+import com.rslab.arthaguardai.stock.StockDetailScreen
 import com.rslab.arthaguardai.utils.SessionManager // Import your SessionManager
 
 class MainActivity : ComponentActivity() {
@@ -72,5 +73,11 @@ fun ArthaGuardNavHost() {
                 userName = email
             )
         }
+
+        composable("stock/{symbol}") { backStackEntry ->
+            val symbol = backStackEntry.arguments?.getString("symbol") ?: return@composable
+            StockDetailScreen(symbol = symbol)
+        }
+
     }
 }

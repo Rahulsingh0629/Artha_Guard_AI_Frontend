@@ -10,17 +10,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 
 import com.rslab.arthaguardai.auth.login.LoginScreen
 import com.rslab.arthaguardai.auth.register.RegisterScreen
-import com.rslab.arthaguardai.dashboard.DashboardScreen
-import com.rslab.arthaguardai.stock.StockDetailScreen
-import com.rslab.arthaguardai.utils.SessionManager // Import your SessionManager
+import com.rslab.arthaguardai.advisory.AdvisoryScreen // Import the new screen
+import com.rslab.arthaguardai.utils.SessionManager
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,14 +40,11 @@ fun ArthaGuardNavHost() {
     val navController = rememberNavController()
     val context = LocalContext.current
     val sessionManager = remember { SessionManager(context) }
-    val token = sessionManager.fetchAuthToken()
-    val savedEmail = sessionManager.fetchUserEmail()
 
-    val startDest = if (token != null && savedEmail != null) {
-        "dashboard/$savedEmail"
-    } else {
-        "login"
-    }
+    val token = sessionManager.fetchAuthToken()
+
+    // 👇 LOGIC CHANGE: Check session and go straight to ADVISORY
+    val startDest = if (token != null) "advisory" else "login"
 
     NavHost(navController = navController, startDestination = startDest) {
 
@@ -62,22 +56,16 @@ fun ArthaGuardNavHost() {
             RegisterScreen(navController = navController)
         }
 
-        composable(
-            route = "dashboard/{userEmail}",
-            arguments = listOf(navArgument("userEmail") { type = NavType.StringType })
-        ) { backStackEntry ->
-
-            val email = backStackEntry.arguments?.getString("userEmail") ?: ""
-            DashboardScreen(
-                navController = navController,
-                userName = email
+        // 👇 NEW MAIN DASHBOARD (The Advisor)
+        composable("advisory") {
+            AdvisoryScreen(
+                onLogoutClick = {
+                    sessionManager.logout()
+                    navController.navigate("login") {
+                        popUpTo("advisory") { inclusive = true }
+                    }
+                }
             )
         }
-
-        composable("stock/{symbol}") { backStackEntry ->
-            val symbol = backStackEntry.arguments?.getString("symbol") ?: return@composable
-            StockDetailScreen(symbol = symbol)
-        }
-
     }
 }

@@ -36,7 +36,7 @@ fun LoginScreen(
     LaunchedEffect(uiState.isSuccess) {
         if (uiState.isSuccess) {
             Toast.makeText(context, "Welcome back!", Toast.LENGTH_SHORT).show()
-            navController.navigate("dashboard/${uiState.userEmail}") {
+            navController.navigate("advisory") {
                 popUpTo("login") { inclusive = true }
             }
             viewModel.resetState()

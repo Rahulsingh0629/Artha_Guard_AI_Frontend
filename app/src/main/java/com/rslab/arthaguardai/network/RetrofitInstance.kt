@@ -7,8 +7,7 @@ import java.util.concurrent.TimeUnit
 
 object RetrofitInstance {
 
-    private const val BASE_URL =
-        "https://artha-guard-ai-backend.onrender.com/api/v1/"
+    private const val BASE_URL = "http://10.143.255.77:8000/api/v1/"
 
     private val client = OkHttpClient.Builder()
         .connectTimeout(90, TimeUnit.SECONDS)

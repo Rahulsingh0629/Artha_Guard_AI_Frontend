@@ -1,6 +1,5 @@
 package com.rslab.arthaguardai.auth.register
 
-import RegisterUiState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rslab.arthaguardai.network.RegisterRequest
@@ -11,7 +10,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
 
 class RegisterViewModel : ViewModel() {
 
@@ -37,7 +35,7 @@ class RegisterViewModel : ViewModel() {
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                api.register(
+                val response = api.register(
                     RegisterRequest(
                         full_name = fullName,
                         username = userName,
@@ -45,22 +43,24 @@ class RegisterViewModel : ViewModel() {
                         password = password,
                         phone_number = phone
                     )
-                ).execute()
+                )
 
-
+                if (response.isSuccessful) {
                     _uiState.update {
                         it.copy(
                             isLoading = false,
                             isSuccess = true
                         )
                     }
-
-            } catch (e: HttpException) {
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        errorMessage = "Registration failed (${e.code()})"
-                    )
+                } else {
+                    val serverMessage = extractErrorMessage(response.errorBody()?.string())
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            isSuccess = false,
+                            errorMessage = serverMessage ?: "Registration failed (${response.code()})"
+                        )
+                    }
                 }
             } catch (e: Exception) {
                 _uiState.update {
@@ -75,5 +75,12 @@ class RegisterViewModel : ViewModel() {
 
     fun resetState() {
         _uiState.value = RegisterUiState()
+    }
+
+    private fun extractErrorMessage(raw: String?): String? {
+        if (raw.isNullOrBlank()) return null
+        val detail = """"detail"\s*:\s*"([^"]+)"""".toRegex().find(raw)?.groupValues?.getOrNull(1)
+        val message = """"message"\s*:\s*"([^"]+)"""".toRegex().find(raw)?.groupValues?.getOrNull(1)
+        return detail ?: message ?: raw
     }
 }

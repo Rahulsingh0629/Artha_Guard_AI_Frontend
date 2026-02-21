@@ -19,8 +19,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rslab.arthaguardai.auth.login.LoginViewModel
 import androidx.navigation.NavController
-import com.rslab.arthaguardai.utils.SessionManager
-import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
@@ -31,12 +29,11 @@ fun LoginScreen(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
 
     LaunchedEffect(uiState.isSuccess) {
         if (uiState.isSuccess) {
             Toast.makeText(context, "Welcome back!", Toast.LENGTH_SHORT).show()
-            navController.navigate("advisory") {
+            navController.navigate("home") {
                 popUpTo("login") { inclusive = true }
             }
             viewModel.resetState()
@@ -132,9 +129,7 @@ fun LoginScreen(
                 // Login Button
                 Button(
                     onClick = {
-                        scope.launch {
-                            viewModel.login(email, password)
-                        }
+                        viewModel.login(email, password)
                     },
                     modifier = Modifier
                         .fillMaxWidth()

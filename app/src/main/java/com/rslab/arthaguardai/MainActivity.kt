@@ -22,6 +22,9 @@ import com.rslab.arthaguardai.auth.register.RegisterScreen
 import com.rslab.arthaguardai.home.AllMarketListScreen
 import com.rslab.arthaguardai.home.HomeScreen
 import com.rslab.arthaguardai.home.StockDetailScreen
+import com.rslab.arthaguardai.news.NewsSentimentScreen
+import com.rslab.arthaguardai.portfolio.PortfolioScreen
+import com.rslab.arthaguardai.scanner.IntradayScannerScreen
 import com.rslab.arthaguardai.utils.SessionManager
 
 class MainActivity : ComponentActivity() {
@@ -62,6 +65,9 @@ fun ArthaGuardNavHost() {
         composable("home") {
             HomeScreen(
                 onOpenAdvisory = { navController.navigate("advisory") },
+                onOpenPortfolio = { navController.navigate("portfolio") },
+                onOpenScanner = { navController.navigate("scanner") },
+                onOpenNews = { navController.navigate("news") },
                 onOpenAllStocks = { navController.navigate("all_market/stocks") },
                 onOpenAllMovers = { navController.navigate("all_market/movers") },
                 onOpenStockDetail = { symbol ->
@@ -108,6 +114,24 @@ fun ArthaGuardNavHost() {
                         popUpTo("home") { inclusive = true }
                     }
                 }
+            )
+        }
+
+        composable("portfolio") {
+            PortfolioScreen(
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable("scanner") {
+            IntradayScannerScreen(
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable("news") {
+            NewsSentimentScreen(
+                onBack = { navController.popBackStack() }
             )
         }
     }

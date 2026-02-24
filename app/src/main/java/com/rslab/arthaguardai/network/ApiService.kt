@@ -1,5 +1,6 @@
 package com.rslab.arthaguardai.network
 
+import com.google.gson.JsonObject
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
@@ -16,6 +17,32 @@ data class RegisterResponse(val status: String, val message: String, val email: 
 
 data class ChatRequest(val message: String)
 data class ChatResponse(val response: String)
+
+data class AdvisoryProfileUpdateRequest(
+    val age: Int,
+    val annual_income: Double,
+    val monthly_savings: Double,
+    val risk_appetite: String,
+    val financial_goal: String,
+    val time_horizon_years: Int
+)
+
+data class AdvisoryInstantAdviceRequest(
+    val age: Int,
+    val annual_income: Double,
+    val monthly_savings: Double,
+    val financial_goal: String,
+    val time_horizon_years: Int,
+    val question: String
+)
+
+data class PortfolioAddRequest(
+    val symbol: String,
+    val quantity: Int,
+    val buy_price: Double,
+    val sector: String = "Unknown",
+    val buy_datetime: String? = null
+)
 
 data class MarketStatusResponse(
     val status: String,
@@ -141,5 +168,46 @@ interface ApiService {
         @Header("Authorization") token: String,
         @Body request: ChatRequest
     ): ChatResponse
+
+    @GET("portfolio/analyze")
+    suspend fun getPortfolioAnalysis(
+        @Header("Authorization") token: String
+    ): JsonObject
+
+    @POST("portfolio/add")
+    suspend fun addPortfolioStock(
+        @Header("Authorization") token: String,
+        @Body request: PortfolioAddRequest
+    ): JsonObject
+
+    @GET("scanner/scan/market")
+    suspend fun getScannerMarket(
+        @Header("Authorization") token: String,
+        @Query("page") page: Int = 1,
+        @Query("page_size") pageSize: Int = 20
+    ): JsonObject
+
+    @GET("news/feed")
+    suspend fun getNewsFeed(
+        @Query("q") query: String = "",
+        @Query("page") page: Int = 1,
+        @Query("page_size") pageSize: Int = 20
+    ): JsonObject
+
+    @GET("advisory/plan")
+    suspend fun getAdvisoryPlan(
+        @Header("Authorization") token: String
+    ): JsonObject
+
+    @POST("advisory/instant_advice")
+    suspend fun getInstantAdvice(
+        @Body request: AdvisoryInstantAdviceRequest
+    ): JsonObject
+
+    @POST("advisory/update_profile")
+    suspend fun updateProfile(
+        @Header("Authorization") token: String,
+        @Body request: AdvisoryProfileUpdateRequest
+    ): JsonObject
 
 }

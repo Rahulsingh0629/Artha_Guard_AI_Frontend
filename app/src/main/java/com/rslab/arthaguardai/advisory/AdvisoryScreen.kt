@@ -27,7 +27,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
@@ -51,6 +50,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.SmartToy
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -68,8 +68,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -88,10 +86,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.rslab.arthaguardai.ui.components.HomeBackgroundBrush
+import com.rslab.arthaguardai.ui.components.HomeStyleTopBar
 import kotlinx.coroutines.launch
 
 @Composable
@@ -103,6 +104,8 @@ fun AdvisoryScreen(
     val uiState by viewModel.uiState.collectAsState()
     var inputText by remember { mutableStateOf("") }
     var pendingAttachment by remember { mutableStateOf<PendingAttachment?>(null) }
+    var showInstantAdviceDialog by remember { mutableStateOf(false) }
+    var showUpdateProfileDialog by remember { mutableStateOf(false) }
     val listState = rememberLazyListState()
     val drawerState = rememberDrawerState(initialValue = androidx.compose.material3.DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -163,6 +166,18 @@ fun AdvisoryScreen(
                         viewModel.selectChatSession(sessionId)
                         scope.launch { drawerState.close() }
                     },
+                    onPlanClick = {
+                        viewModel.fetchInvestmentPlan()
+                        scope.launch { drawerState.close() }
+                    },
+                    onInstantAdviceClick = {
+                        showInstantAdviceDialog = true
+                        scope.launch { drawerState.close() }
+                    },
+                    onUpdateProfileClick = {
+                        showUpdateProfileDialog = true
+                        scope.launch { drawerState.close() }
+                    },
                     onLogoutClick = {
                         scope.launch { drawerState.close() }
                         onLogoutClick()
@@ -172,7 +187,7 @@ fun AdvisoryScreen(
         }
     ) {
         Scaffold(
-            containerColor = Color(0xFF030712),
+            containerColor = Color.Transparent,
             topBar = {
                 AdvisoryTopBar(
                     selectedAgentName = selectedAgentName,
@@ -206,23 +221,48 @@ fun AdvisoryScreen(
                 )
             }
         ) { padding ->
-            LazyColumn(
-                state = listState,
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(padding),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 18.dp),
-                verticalArrangement = Arrangement.spacedBy(14.dp)
+                    .padding(padding)
+                    .background(HomeBackgroundBrush)
             ) {
-                items(uiState.messages) { message ->
-                    MessageBubble(message = message)
-                }
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 18.dp),
+                    verticalArrangement = Arrangement.spacedBy(14.dp)
+                ) {
+                    items(uiState.messages) { message ->
+                        MessageBubble(message = message)
+                    }
 
-                if (uiState.isLoading) {
-                    item { TypingIndicator() }
+                    if (uiState.isLoading) {
+                        item { TypingIndicator() }
+                    }
                 }
             }
         }
+    }
+
+    if (showInstantAdviceDialog) {
+        InstantAdviceDialog(
+            onDismiss = { showInstantAdviceDialog = false },
+            onSubmit = { input ->
+                showInstantAdviceDialog = false
+                viewModel.requestInstantAdvice(input)
+            }
+        )
+    }
+
+    if (showUpdateProfileDialog) {
+        UpdateProfileDialog(
+            onDismiss = { showUpdateProfileDialog = false },
+            onSubmit = { input ->
+                showUpdateProfileDialog = false
+                viewModel.updateProfile(input)
+            }
+        )
     }
 }
 
@@ -235,6 +275,9 @@ private fun AdvisoryDrawerContent(
     onNewChatClick: () -> Unit,
     onAgentClick: (String) -> Unit,
     onSessionClick: (String) -> Unit,
+    onPlanClick: () -> Unit,
+    onInstantAdviceClick: () -> Unit,
+    onUpdateProfileClick: () -> Unit,
     onLogoutClick: () -> Unit
 ) {
     Column(
@@ -372,6 +415,52 @@ private fun AdvisoryDrawerContent(
 
         Spacer(modifier = Modifier.height(18.dp))
         HorizontalDivider(color = Color(0xFF374151))
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Text(
+            text = "Advisory Tools",
+            fontSize = 13.sp,
+            color = Color(0xFF9CA3AF),
+            modifier = Modifier.padding(horizontal = 4.dp)
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+
+        NavigationDrawerItem(
+            label = { Text("Plan") },
+            selected = false,
+            onClick = onPlanClick,
+            icon = { Icon(Icons.AutoMirrored.Filled.ShowChart, contentDescription = null) },
+            colors = NavigationDrawerItemDefaults.colors(
+                unselectedContainerColor = Color.Transparent,
+                unselectedTextColor = Color.White,
+                unselectedIconColor = Color(0xFF2DD4BF)
+            )
+        )
+        NavigationDrawerItem(
+            label = { Text("Instant Advice") },
+            selected = false,
+            onClick = onInstantAdviceClick,
+            icon = { Icon(Icons.Default.SmartToy, contentDescription = null) },
+            colors = NavigationDrawerItemDefaults.colors(
+                unselectedContainerColor = Color.Transparent,
+                unselectedTextColor = Color.White,
+                unselectedIconColor = Color(0xFF2DD4BF)
+            )
+        )
+        NavigationDrawerItem(
+            label = { Text("Update Profile") },
+            selected = false,
+            onClick = onUpdateProfileClick,
+            icon = { Icon(Icons.Default.Security, contentDescription = null) },
+            colors = NavigationDrawerItemDefaults.colors(
+                unselectedContainerColor = Color.Transparent,
+                unselectedTextColor = Color.White,
+                unselectedIconColor = Color(0xFF2DD4BF)
+            )
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+        HorizontalDivider(color = Color(0xFF374151))
         Spacer(modifier = Modifier.height(8.dp))
 
         NavigationDrawerItem(
@@ -388,37 +477,19 @@ private fun AdvisoryDrawerContent(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AdvisoryTopBar(
     selectedAgentName: String,
     onMenuClick: () -> Unit
 ) {
-    TopAppBar(
-        title = {
-            Column {
-                Text(
-                    text = "ArthaGuard AI",
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = selectedAgentName,
-                    fontSize = 12.sp,
-                    color = Color(0xFF2DD4BF)
-                )
-            }
-        },
-        navigationIcon = {
-            IconButton(onClick = onMenuClick) {
-                Icon(Icons.Default.Menu, contentDescription = "Open menu")
-            }
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = Color(0xFF111827),
-            titleContentColor = Color.White,
-            navigationIconContentColor = Color.White
-        ),
-        modifier = Modifier.statusBarsPadding()
+    HomeStyleTopBar(
+        title = "ArthaGuard AI",
+        subtitle = selectedAgentName,
+        navigationIcon = Icons.Default.Menu,
+        navigationContentDescription = "Open menu",
+        onNavigationClick = onMenuClick,
+        primaryActionIcon = Icons.Default.SmartToy,
+        primaryActionContentDescription = "Advisor"
     )
 }
 
@@ -625,6 +696,216 @@ private fun ChatInputArea(
             }
         }
     }
+}
+
+@Composable
+private fun InstantAdviceDialog(
+    onDismiss: () -> Unit,
+    onSubmit: (InstantAdviceInput) -> Unit
+) {
+    var age by remember { mutableStateOf("30") }
+    var annualIncome by remember { mutableStateOf("1200000") }
+    var monthlySavings by remember { mutableStateOf("30000") }
+    var goal by remember { mutableStateOf("Long term wealth growth") }
+    var horizonYears by remember { mutableStateOf("10") }
+    var question by remember { mutableStateOf("How should I invest monthly to reach my goal?") }
+    var validationError by remember { mutableStateOf<String?>(null) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Instant Advice") },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedTextField(
+                    value = age,
+                    onValueChange = { age = it },
+                    label = { Text("Age") },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+                OutlinedTextField(
+                    value = annualIncome,
+                    onValueChange = { annualIncome = it },
+                    label = { Text("Annual income") },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+                OutlinedTextField(
+                    value = monthlySavings,
+                    onValueChange = { monthlySavings = it },
+                    label = { Text("Monthly savings") },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+                OutlinedTextField(
+                    value = goal,
+                    onValueChange = { goal = it },
+                    label = { Text("Financial goal") },
+                    singleLine = true
+                )
+                OutlinedTextField(
+                    value = horizonYears,
+                    onValueChange = { horizonYears = it },
+                    label = { Text("Time horizon (years)") },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+                OutlinedTextField(
+                    value = question,
+                    onValueChange = { question = it },
+                    label = { Text("Question") },
+                    maxLines = 3
+                )
+
+                if (!validationError.isNullOrBlank()) {
+                    Text(
+                        text = validationError.orEmpty(),
+                        color = Color(0xFFFCA5A5),
+                        fontSize = 12.sp
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                val parsedAge = age.toIntOrNull()
+                val parsedIncome = annualIncome.toDoubleOrNull()
+                val parsedSavings = monthlySavings.toDoubleOrNull()
+                val parsedHorizon = horizonYears.toIntOrNull()
+
+                if (parsedAge == null || parsedIncome == null || parsedSavings == null || parsedHorizon == null || goal.isBlank() || question.isBlank()) {
+                    validationError = "Please enter valid numeric values and fill all fields."
+                    return@TextButton
+                }
+
+                onSubmit(
+                    InstantAdviceInput(
+                        age = parsedAge,
+                        annualIncome = parsedIncome,
+                        monthlySavings = parsedSavings,
+                        financialGoal = goal.trim(),
+                        timeHorizonYears = parsedHorizon,
+                        question = question.trim()
+                    )
+                )
+            }) {
+                Text("Submit")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        },
+        containerColor = Color(0xFF111827),
+        titleContentColor = Color.White,
+        textContentColor = Color.White
+    )
+}
+
+@Composable
+private fun UpdateProfileDialog(
+    onDismiss: () -> Unit,
+    onSubmit: (ProfileUpdateInput) -> Unit
+) {
+    var age by remember { mutableStateOf("30") }
+    var annualIncome by remember { mutableStateOf("1200000") }
+    var monthlySavings by remember { mutableStateOf("30000") }
+    var riskAppetite by remember { mutableStateOf("MODERATE") }
+    var goal by remember { mutableStateOf("Retirement corpus") }
+    var horizonYears by remember { mutableStateOf("10") }
+    var validationError by remember { mutableStateOf<String?>(null) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Update Profile") },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedTextField(
+                    value = age,
+                    onValueChange = { age = it },
+                    label = { Text("Age") },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+                OutlinedTextField(
+                    value = annualIncome,
+                    onValueChange = { annualIncome = it },
+                    label = { Text("Annual income") },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+                OutlinedTextField(
+                    value = monthlySavings,
+                    onValueChange = { monthlySavings = it },
+                    label = { Text("Monthly savings") },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+                OutlinedTextField(
+                    value = riskAppetite,
+                    onValueChange = { riskAppetite = it },
+                    label = { Text("Risk appetite (LOW/MODERATE/HIGH)") },
+                    singleLine = true
+                )
+                OutlinedTextField(
+                    value = goal,
+                    onValueChange = { goal = it },
+                    label = { Text("Financial goal") },
+                    singleLine = true
+                )
+                OutlinedTextField(
+                    value = horizonYears,
+                    onValueChange = { horizonYears = it },
+                    label = { Text("Time horizon (years)") },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+
+                if (!validationError.isNullOrBlank()) {
+                    Text(
+                        text = validationError.orEmpty(),
+                        color = Color(0xFFFCA5A5),
+                        fontSize = 12.sp
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                val parsedAge = age.toIntOrNull()
+                val parsedIncome = annualIncome.toDoubleOrNull()
+                val parsedSavings = monthlySavings.toDoubleOrNull()
+                val parsedHorizon = horizonYears.toIntOrNull()
+
+                if (parsedAge == null || parsedIncome == null || parsedSavings == null || parsedHorizon == null || goal.isBlank() || riskAppetite.isBlank()) {
+                    validationError = "Please enter valid numeric values and fill all fields."
+                    return@TextButton
+                }
+
+                onSubmit(
+                    ProfileUpdateInput(
+                        age = parsedAge,
+                        annualIncome = parsedIncome,
+                        monthlySavings = parsedSavings,
+                        riskAppetite = riskAppetite.trim().uppercase(),
+                        financialGoal = goal.trim(),
+                        timeHorizonYears = parsedHorizon
+                    )
+                )
+            }) {
+                Text("Save")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        },
+        containerColor = Color(0xFF111827),
+        titleContentColor = Color.White,
+        textContentColor = Color.White
+    )
 }
 
 @Composable

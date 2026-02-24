@@ -30,6 +30,9 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Newspaper
+import androidx.compose.material.icons.filled.PieChart
+import androidx.compose.material.icons.filled.Radar
 import androidx.compose.material.icons.filled.ShowChart
 import androidx.compose.material.icons.filled.SmartToy
 import androidx.compose.material3.Card
@@ -79,6 +82,9 @@ private sealed interface StockGridCell {
 @Composable
 fun HomeScreen(
     onOpenAdvisory: () -> Unit,
+    onOpenPortfolio: () -> Unit,
+    onOpenScanner: () -> Unit,
+    onOpenNews: () -> Unit,
     onOpenStockDetail: (String) -> Unit,
     onOpenAllStocks: () -> Unit,
     onOpenAllMovers: () -> Unit,
@@ -156,6 +162,24 @@ fun HomeScreen(
                     scope.launch {
                         drawerState.close()
                         onOpenAdvisory()
+                    }
+                },
+                onOpenPortfolio = {
+                    scope.launch {
+                        drawerState.close()
+                        onOpenPortfolio()
+                    }
+                },
+                onOpenScanner = {
+                    scope.launch {
+                        drawerState.close()
+                        onOpenScanner()
+                    }
+                },
+                onOpenNews = {
+                    scope.launch {
+                        drawerState.close()
+                        onOpenNews()
                     }
                 },
                 onLogout = {
@@ -324,6 +348,9 @@ private fun HomeDrawerContent(
     onOpenAllMovers: () -> Unit,
     onOpenAllStocks: () -> Unit,
     onOpenAdvisory: () -> Unit,
+    onOpenPortfolio: () -> Unit,
+    onOpenScanner: () -> Unit,
+    onOpenNews: () -> Unit,
     onLogout: () -> Unit
 ) {
     ModalDrawerSheet(
@@ -335,7 +362,7 @@ private fun HomeDrawerContent(
             text = "ArthaGuard AI",
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF102446),
+            color = Color(0xFF030917),
             modifier = Modifier.padding(horizontal = 18.dp)
         )
         Text(
@@ -374,6 +401,27 @@ private fun HomeDrawerContent(
             icon = { Icon(Icons.Default.SmartToy, contentDescription = null) },
             colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent)
         )
+        NavigationDrawerItem(
+            label = { Text("Portfolio") },
+            selected = false,
+            onClick = onOpenPortfolio,
+            icon = { Icon(Icons.Default.PieChart, contentDescription = null) },
+            colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent)
+        )
+        NavigationDrawerItem(
+            label = { Text("Scanner") },
+            selected = false,
+            onClick = onOpenScanner,
+            icon = { Icon(Icons.Default.Radar, contentDescription = null) },
+            colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent)
+        )
+        NavigationDrawerItem(
+            label = { Text("News") },
+            selected = false,
+            onClick = onOpenNews,
+            icon = { Icon(Icons.Default.Newspaper, contentDescription = null) },
+            colors = NavigationDrawerItemDefaults.colors(unselectedContainerColor = Color.Transparent)
+        )
         Spacer(modifier = Modifier.height(6.dp))
         HorizontalDivider(
             color = Color(0xFFDCE4F6),
@@ -397,11 +445,11 @@ private fun HomeTopBar(
 ) {
     Surface(
         shape = RoundedCornerShape(28.dp),
-        color = Color(0xFF0E1C38),
-        shadowElevation = 12.dp,
+        color = Color(0xFF01040E),
+        shadowElevation = 20.dp,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 16.dp, end = 16.dp, top = 30.dp, bottom = 12.dp)
+            .padding(start = 16.dp, end = 16.dp, top = 40.dp, bottom = 12.dp)
     ) {
         Row(
             modifier = Modifier

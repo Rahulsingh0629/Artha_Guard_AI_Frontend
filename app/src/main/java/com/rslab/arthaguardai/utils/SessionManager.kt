@@ -11,9 +11,6 @@ class SessionManager(context: Context) {
         const val KEY_USER_EMAIL = "user_email"
     }
 
-    /**
-     * Function to save auth token
-     */
     fun saveAuthToken(token: String, email: String) {
         val editor = prefs.edit()
         editor.putString(KEY_ACCESS_TOKEN, token)
@@ -21,23 +18,14 @@ class SessionManager(context: Context) {
         editor.apply()
     }
 
-    /**
-     * Function to fetch auth token
-     */
     fun fetchAuthToken(): String? {
         return prefs.getString(KEY_ACCESS_TOKEN, null)
     }
 
-    /**
-     * Function to fetch user email
-     */
     fun fetchUserEmail(): String? {
         return prefs.getString(KEY_USER_EMAIL, null)
     }
 
-    /**
-     * Clear session (Logout)
-     */
     fun logout() {
         val editor = prefs.edit()
         editor.clear()

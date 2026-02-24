@@ -23,6 +23,24 @@ data class ChatSessionSummary(
     val updatedAt: Long
 )
 
+data class InstantAdviceInput(
+    val age: Int,
+    val annualIncome: Double,
+    val monthlySavings: Double,
+    val financialGoal: String,
+    val timeHorizonYears: Int,
+    val question: String
+)
+
+data class ProfileUpdateInput(
+    val age: Int,
+    val annualIncome: Double,
+    val monthlySavings: Double,
+    val riskAppetite: String,
+    val financialGoal: String,
+    val timeHorizonYears: Int
+)
+
 data class ChatMessage(
     val text: String,
     val isUser: Boolean, // true = User, false = AI

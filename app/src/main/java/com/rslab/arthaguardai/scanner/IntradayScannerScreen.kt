@@ -117,8 +117,7 @@ fun IntradayScannerScreen(
     Scaffold(
         topBar = {
             HomeStyleTopBar(
-                title = "ArthaGuard AI",
-                subtitle = "Scanner",
+                title = "Scanner",
                 navigationIcon = Icons.AutoMirrored.Filled.ArrowBack,
                 navigationContentDescription = "Back",
                 onNavigationClick = onBack,

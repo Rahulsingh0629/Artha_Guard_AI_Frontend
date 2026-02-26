@@ -146,7 +146,7 @@ fun AdvisoryScreen(
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet(
-                drawerContainerColor = Color(0xFF111827),
+                drawerContainerColor = Color(0xFFF4F6F8),
                 drawerContentColor = Color.White
             ) {
                 AdvisoryDrawerContent(
@@ -289,12 +289,13 @@ private fun AdvisoryDrawerContent(
         Text(
             text = "ArthaGuard AI",
             fontSize = 22.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = Color.Black
         )
         Text(
             text = "Advanced advisory workspace",
             fontSize = 13.sp,
-            color = Color(0xFF9CA3AF),
+            color = Color(0xFF272728),
             modifier = Modifier.padding(top = 2.dp)
         )
         Spacer(modifier = Modifier.height(14.dp))
@@ -305,20 +306,20 @@ private fun AdvisoryDrawerContent(
             onClick = onNewChatClick,
             icon = { Icon(Icons.Default.Add, contentDescription = null) },
             colors = NavigationDrawerItemDefaults.colors(
-                unselectedContainerColor = Color(0xFF1F2937),
+                unselectedContainerColor = Color(0xFFD1D1D3),
                 unselectedIconColor = Color(0xFF2DD4BF),
-                unselectedTextColor = Color.White
+                unselectedTextColor = Color.Black
             )
         )
 
         Spacer(modifier = Modifier.height(16.dp))
-        HorizontalDivider(color = Color(0xFF374151))
+        HorizontalDivider(color = Color(0xFFE1E4E8))
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
             text = "My Agents",
             fontSize = 13.sp,
-            color = Color(0xFF9CA3AF),
+            color = Color(0xFF070707),
             modifier = Modifier.padding(horizontal = 4.dp)
         )
         Spacer(modifier = Modifier.height(8.dp))
@@ -329,7 +330,8 @@ private fun AdvisoryDrawerContent(
                     Column {
                         Text(
                             text = agent.name,
-                            fontWeight = FontWeight.SemiBold
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.Black
                         )
                         Text(
                             text = agent.description,
@@ -349,25 +351,25 @@ private fun AdvisoryDrawerContent(
                     )
                 },
                 colors = NavigationDrawerItemDefaults.colors(
-                    selectedContainerColor = Color(0xFF1F2937),
+                    selectedContainerColor = Color(0xFFF3F2E5),
                     selectedIconColor = Color(0xFF2DD4BF),
                     selectedTextColor = Color.White,
                     unselectedContainerColor = Color.Transparent,
                     unselectedTextColor = Color.White,
-                    unselectedIconColor = Color(0xFF9CA3AF)
+                    unselectedIconColor = Color(0xFFAFFAEA)
                 ),
                 modifier = Modifier.padding(vertical = 2.dp)
             )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-        HorizontalDivider(color = Color(0xFF374151))
+        HorizontalDivider(color = Color(0xFFE3E5E7))
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
             text = "Chat History",
             fontSize = 13.sp,
-            color = Color(0xFF9CA3AF),
+            color = Color(0xFF101113),
             modifier = Modifier.padding(horizontal = 4.dp)
         )
         Spacer(modifier = Modifier.height(8.dp))
@@ -375,7 +377,7 @@ private fun AdvisoryDrawerContent(
         if (sessions.isEmpty()) {
             Text(
                 text = "No chats yet.",
-                color = Color(0xFF9CA3AF),
+                color = Color(0xFF0C0D0E),
                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
             )
         } else {
@@ -386,14 +388,15 @@ private fun AdvisoryDrawerContent(
                             Text(
                                 text = session.title,
                                 maxLines = 1,
-                                overflow = TextOverflow.Ellipsis
+                                overflow = TextOverflow.Ellipsis,
+                                color = Color.Black
                             )
                             Text(
                                 text = session.preview,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                                 fontSize = 12.sp,
-                                color = Color(0xFF9CA3AF)
+                                color = Color(0xFF939398)
                             )
                         }
                     },
@@ -401,7 +404,7 @@ private fun AdvisoryDrawerContent(
                     onClick = { onSessionClick(session.id) },
                     icon = { Icon(Icons.Default.ChatBubbleOutline, contentDescription = null) },
                     colors = NavigationDrawerItemDefaults.colors(
-                        selectedContainerColor = Color(0xFF1F2937),
+                        selectedContainerColor = Color(0xFFDADCDE),
                         selectedIconColor = Color(0xFF2DD4BF),
                         selectedTextColor = Color.White,
                         unselectedContainerColor = Color.Transparent,
@@ -414,13 +417,13 @@ private fun AdvisoryDrawerContent(
         }
 
         Spacer(modifier = Modifier.height(18.dp))
-        HorizontalDivider(color = Color(0xFF374151))
+        HorizontalDivider(color = Color(0xFFF8F9FA))
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
             text = "Advisory Tools",
             fontSize = 13.sp,
-            color = Color(0xFF9CA3AF),
+            color = Color(0xFF09090A),
             modifier = Modifier.padding(horizontal = 4.dp)
         )
         Spacer(modifier = Modifier.height(8.dp))
@@ -432,7 +435,7 @@ private fun AdvisoryDrawerContent(
             icon = { Icon(Icons.AutoMirrored.Filled.ShowChart, contentDescription = null) },
             colors = NavigationDrawerItemDefaults.colors(
                 unselectedContainerColor = Color.Transparent,
-                unselectedTextColor = Color.White,
+                unselectedTextColor = Color.Black,
                 unselectedIconColor = Color(0xFF2DD4BF)
             )
         )
@@ -443,7 +446,7 @@ private fun AdvisoryDrawerContent(
             icon = { Icon(Icons.Default.SmartToy, contentDescription = null) },
             colors = NavigationDrawerItemDefaults.colors(
                 unselectedContainerColor = Color.Transparent,
-                unselectedTextColor = Color.White,
+                unselectedTextColor = Color.Black,
                 unselectedIconColor = Color(0xFF2DD4BF)
             )
         )
@@ -454,13 +457,13 @@ private fun AdvisoryDrawerContent(
             icon = { Icon(Icons.Default.Security, contentDescription = null) },
             colors = NavigationDrawerItemDefaults.colors(
                 unselectedContainerColor = Color.Transparent,
-                unselectedTextColor = Color.White,
+                unselectedTextColor = Color.Black,
                 unselectedIconColor = Color(0xFF2DD4BF)
             )
         )
 
         Spacer(modifier = Modifier.height(12.dp))
-        HorizontalDivider(color = Color(0xFF374151))
+        HorizontalDivider(color = Color(0xFFF6F7F8))
         Spacer(modifier = Modifier.height(8.dp))
 
         NavigationDrawerItem(
@@ -470,8 +473,8 @@ private fun AdvisoryDrawerContent(
             icon = { Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = null) },
             colors = NavigationDrawerItemDefaults.colors(
                 unselectedContainerColor = Color.Transparent,
-                unselectedIconColor = Color(0xFFF87171),
-                unselectedTextColor = Color(0xFFFCA5A5)
+                unselectedIconColor = Color(0xFFFA0C0C),
+                unselectedTextColor = Color(0xFFE52525)
             )
         )
     }
@@ -483,13 +486,12 @@ private fun AdvisoryTopBar(
     onMenuClick: () -> Unit
 ) {
     HomeStyleTopBar(
-        title = "ArthaGuard AI",
+        title = "Advisory",
         subtitle = selectedAgentName,
         navigationIcon = Icons.Default.Menu,
         navigationContentDescription = "Open menu",
         onNavigationClick = onMenuClick,
         primaryActionIcon = Icons.Default.SmartToy,
-        primaryActionContentDescription = "Advisor"
     )
 }
 
@@ -565,7 +567,7 @@ private fun ChatInputArea(
     var attachmentMenuExpanded by remember { mutableStateOf(false) }
 
     Surface(
-        color = Color(0xFF111827),
+        color = Color(0xFFE8EAF6),
         tonalElevation = 1.dp
     ) {
         Row(
@@ -927,7 +929,7 @@ private fun TypingIndicator() {
     ) {
         Text(
             text = "AI thinking",
-            color = Color(0xFF9CA3AF),
+            color = Color(0xFF1E1E1F),
             fontSize = 13.sp
         )
         Spacer(modifier = Modifier.width(4.dp))
